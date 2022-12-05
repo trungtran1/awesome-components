@@ -1,70 +1,92 @@
-# Getting Started with Create React App
+# Publish npm package
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Step 1: Create and isolate components to publish
 
-## Available Scripts
+In the boilerplate app, I went into the src folder and deleted everything besides App.js, app.css, and index.js.
+I also added a folder called lib that will store everything I want to publish on npm. Inside lib , there is a folder called components to store the component elements and a file called index.js to export them.
 
-In the project directory, you can run:
+These components are both in the components folder. Then, we’ll add them to the index.js file.
 
-### `npm start`
+## Step 2: Install Babel and build the dist folder
+```
+npm install --save-dev @babel/core @babel/cli @babel/preset-env
+npm install -save @babel/polyfill
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+In the top-level folder of your project, add a file called babel.config.json and add the following presets:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+{
+ "presets": [
+  [
+   "@babel/env",
+    {
+     "targets": {
+     "edge": "17",
+     "firefox": "60",
+     "chrome": "67",
+     "safari": "11.1"
+      },
+   "useBuiltIns": "usage",
+   "corejs": "3.6.5"
+    }
+],
+   "@babel/preset-react"
+]
+}
 
-### `npm test`
+```
+ 
+ @babel/env tells the browser which versions it should target
+ @babel/preset-react allows Babel to compile JSX.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+In package.json , under scripts, replace the build script with the following:
+```
+"build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files";
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This will copy the src/lib to a new folder called dist . This folder is invisible but will be added to your root folder after build.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Step 3: Alter the package.json for publishing
+Update the package.json
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+{
+  "name": "awesome-test-components-1",
+  "description": "Awesome React components for test",
+  "version": "1.0.0",
+  "keywords": [
+    "react",
+    "components",
+    "ui"
+  ],
+  "private": false,
+  "author": "David",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trungtran1/awesome-components.git"
+  },
+  .....
+}
+```
 
-### `npm run eject`
+## Step 4: Publish
+Try login with npm in the terminal
+```
+npm login
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Enter the credentials to login and get code verification by Authenticator app (if 2FA enabled)
+Then publish the package
+```
+npm publish
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+DONE!
